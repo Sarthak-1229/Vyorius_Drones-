@@ -1,0 +1,8 @@
+.task-board-container {
+  display: flex;
+  gap: 1.5rem;
+  padding: 1rem 0;
+  height: calc(100vh - 120px); /* Adjust based on header height */
+  overflow-x: auto;
+  align-items: flex-start;
+}
