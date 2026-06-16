@@ -22,11 +22,10 @@
   letter-spacing: 0.5px;
   text-transform: uppercase;
   color: var(--text-main);
-  text-shadow: 0 2px 4px rgba(0,0,0,0.3);
 }
 
 .task-count {
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(0, 0, 0, 0.05);
   padding: 0.2rem 0.6rem;
   border-radius: 20px;
   font-size: 0.85rem;
@@ -55,6 +54,12 @@
 }
 
 .column-content::-webkit-scrollbar-thumb {
-  background-color: rgba(255, 255, 255, 0.2);
+  background-color: rgba(0, 0, 0, 0.1);
   border-radius: 10px;
+}
+
+.dragging-over {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  transition: background 0.2s ease;
 }
