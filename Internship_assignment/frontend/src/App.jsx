@@ -1,14 +1,12 @@
 import React from "react";
+import { TaskProvider } from "./context/TaskContext";
 import TaskBoard from "./components/TaskBoard";
 
 function App() {
   return (
-    <div className="app-container">
-      <header className="app-header">
-        <h1>Real-time Kanban Board</h1>
-      </header>
+    <TaskProvider>
       <TaskBoard />
-    </div>
+    </TaskProvider>
   );
 }
 

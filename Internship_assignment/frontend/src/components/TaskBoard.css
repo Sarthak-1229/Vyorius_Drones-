@@ -1,26 +1,2 @@
-.task-board-container {
-  display: flex;
-  gap: 1.5rem;
-  padding: 1rem 0 2rem 0;
-  height: calc(100vh - 120px);
-  overflow-x: auto;
-  align-items: flex-start;
-  justify-content: center; /* Center columns horizontally on large screens */
-  
-  /* Scrollbar styling for glass effect */
-  scrollbar-width: thin;
-  scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
-}
-
-.task-board-container::-webkit-scrollbar {
-  height: 8px;
-}
-
-.task-board-container::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.task-board-container::-webkit-scrollbar-thumb {
-  background-color: rgba(255, 255, 255, 0.2);
-  border-radius: 10px;
-}
+/* TaskBoard styles are fully handled in index.css */
+/* This file is kept for import compatibility */
