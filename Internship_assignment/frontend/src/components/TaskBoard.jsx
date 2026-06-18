@@ -121,15 +121,22 @@ function TaskBoard() {
 
         <DragDropContext onDragEnd={handleDragEnd}>
           <div className="task-board-container">
-            {COLUMNS.map((col) => (
-              <Column
-                key={col.id}
-                col={col}
-                tasks={tasks.filter((t) => t.status === col.id)}
-                onAddTask={() => openAddModal(col.id)}
-                onEditTask={openEditModal}
-              />
-            ))}
+            {COLUMNS.map((col) => {
+              const columnTasks = React.useMemo(
+                () => tasks.filter((t) => t.status === col.id),
+                [tasks, col.id]
+              );
+              
+              return (
+                <Column
+                  key={col.id}
+                  col={col}
+                  tasks={columnTasks}
+                  onAddTask={() => openAddModal(col.id)}
+                  onEditTask={openEditModal}
+                />
+              );
+            })}
           </div>
         </DragDropContext>
       </div>
