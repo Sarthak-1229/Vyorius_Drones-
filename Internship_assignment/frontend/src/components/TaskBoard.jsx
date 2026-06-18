@@ -97,7 +97,7 @@ function TaskBoard() {
         <div className="app-header-brand">
           <div className="brand-icon">🗂</div>
           <h1>
-            Vyorius <span>Kanban</span>
+            Vyorius <span>Drones</span>
           </h1>
         </div>
         <div className="header-meta">

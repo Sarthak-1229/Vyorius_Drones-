@@ -53,4 +53,4 @@ function Column({ col, tasks, onAddTask, onEditTask }) {
   );
 }
 
-export default Column;
+export default React.memo(Column);

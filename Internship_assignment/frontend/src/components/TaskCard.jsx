@@ -100,4 +100,4 @@ function TaskCard({ task, index, onEdit }) {
   );
 }
 
-export default TaskCard;
+export default React.memo(TaskCard);
