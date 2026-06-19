@@ -19,11 +19,17 @@ const Task = require("./models/Task");
 const User = require("./models/User");
 
 const app = express();
-app.use(cors());
+app.use(cors({
+  origin: process.env.FRONTEND_URL || "*"
+}));
 app.use(express.json());
 
 const server = http.createServer(app);
-const io = new Server(server, { cors: { origin: "*" } });
+const io = new Server(server, { 
+  cors: { 
+    origin: process.env.FRONTEND_URL || "*" 
+  } 
+});
 
 const JWT_SECRET = process.env.JWT_SECRET || "fallback_secret_key";
 
