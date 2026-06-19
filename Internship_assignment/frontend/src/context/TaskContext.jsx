@@ -27,30 +27,35 @@ export const TaskProvider = ({ children }) => {
 
     setSocket(newSocket);
 
+    const normalizeTask = (t) => ({ ...t, id: t._id?.toString() || t.id?.toString() });
+
     // Initial sync
     newSocket.on('sync:tasks', (initialTasks) => {
-      setTasks(initialTasks);
+      setTasks(initialTasks.map(normalizeTask));
     });
 
     // Task event listeners
     newSocket.on('task:created', (newTask) => {
-      setTasks((prev) => [...prev, newTask]);
+      setTasks((prev) => [...prev, normalizeTask(newTask)]);
     });
 
     newSocket.on('task:updated', (updatedTask) => {
+      const normalized = normalizeTask(updatedTask);
       setTasks((prev) =>
-        prev.map((t) => (t.id === updatedTask.id ? updatedTask : t))
+        prev.map((t) => (t.id === normalized.id ? normalized : t))
       );
     });
 
     newSocket.on('task:moved', (movedTask) => {
+      const normalized = normalizeTask(movedTask);
       setTasks((prev) =>
-        prev.map((t) => (t.id === movedTask.id ? movedTask : t))
+        prev.map((t) => (t.id === normalized.id ? normalized : t))
       );
     });
 
     newSocket.on('task:deleted', (taskId) => {
-      setTasks((prev) => prev.filter((t) => t.id !== taskId));
+      const normalizedId = taskId?.toString();
+      setTasks((prev) => prev.filter((t) => t.id !== normalizedId));
     });
 
     return () => {

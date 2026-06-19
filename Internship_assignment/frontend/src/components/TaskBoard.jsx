@@ -4,6 +4,7 @@ import { useTaskContext } from '../context/TaskContext';
 import { useAuth } from '../context/AuthContext';
 import Column from './Column';
 import TaskModal from './TaskModal';
+import TaskViewModal from './TaskViewModal';
 
 const COLUMNS = [
   { id: 'To Do', label: 'To Do', cssClass: 'column-todo', emptyIcon: '📋', emptyText: 'No tasks yet' },
@@ -70,7 +71,10 @@ function TaskBoard() {
   const { user, logout } = useAuth();
   const [modalOpen, setModalOpen] = useState(false);
   const [editingTask, setEditingTask] = useState(null);
+  const [viewingTask, setViewingTask] = useState(null);
   const [defaultColumn, setDefaultColumn] = useState('To Do');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [activeFilter, setActiveFilter] = useState('All');
 
   const connected = !!socket;
 
@@ -91,6 +95,24 @@ function TaskBoard() {
     setEditingTask(task);
     setModalOpen(true);
   };
+
+  const openViewModal = (task) => {
+    setViewingTask(task);
+  };
+
+  const filteredTasks = tasks.filter(t => {
+    if (searchQuery && !t.title.toLowerCase().includes(searchQuery.toLowerCase())) {
+      return false;
+    }
+    if (activeFilter === 'High Priority' && t.priority !== 'High') return false;
+    if (activeFilter === 'Overdue') {
+      const isOverdue = t.dueDate && new Date(t.dueDate) < new Date() && t.status !== 'Done';
+      if (!isOverdue) return false;
+    }
+    if (activeFilter === 'Assigned to Me' && t.assignee !== user?.username) return false;
+    if (activeFilter === 'Bugs' && t.category !== 'Bug') return false;
+    return true;
+  });
 
   return (
     <div className="app-container">
@@ -126,17 +148,38 @@ function TaskBoard() {
         </div>
       </header>
 
+      {/* Controls */}
+      <div className="board-controls" style={{ padding: '0 2rem', marginBottom: '1rem', display: 'flex', gap: '1rem', alignItems: 'center' }}>
+        <input 
+          type="text" 
+          placeholder="Search tasks..." 
+          className="form-input search-input" 
+          value={searchQuery}
+          onChange={e => setSearchQuery(e.target.value)}
+          style={{ width: '300px', marginBottom: 0 }}
+        />
+        <div className="filter-chips" style={{ display: 'flex', gap: '0.5rem' }}>
+          {['All', 'High Priority', 'Overdue', 'Assigned to Me', 'Bugs'].map(f => (
+            <button 
+              key={f}
+              className={`btn ${activeFilter === f ? 'btn-primary' : 'btn-ghost'}`}
+              onClick={() => setActiveFilter(f)}
+              style={{ padding: '0.4rem 1rem', fontSize: '0.85rem' }}
+            >
+              {f}
+            </button>
+          ))}
+        </div>
+      </div>
+
       {/* Board */}
       <div className="task-board-wrapper">
-        <ProgressChart tasks={tasks} />
+        <ProgressChart tasks={filteredTasks} />
 
         <DragDropContext onDragEnd={handleDragEnd}>
           <div className="task-board-container">
             {COLUMNS.map((col) => {
-              const columnTasks = React.useMemo(
-                () => tasks.filter((t) => t.status === col.id),
-                [tasks, col.id]
-              );
+              const columnTasks = filteredTasks.filter((t) => t.status === col.id);
               
               return (
                 <Column
@@ -145,6 +188,7 @@ function TaskBoard() {
                   tasks={columnTasks}
                   onAddTask={() => openAddModal(col.id)}
                   onEditTask={openEditModal}
+                  onViewTask={openViewModal}
                 />
               );
             })}
@@ -159,6 +203,9 @@ function TaskBoard() {
           editingTask={editingTask}
           defaultColumn={defaultColumn}
         />
+      )}
+      {viewingTask && (
+        <TaskViewModal task={viewingTask} onClose={() => setViewingTask(null)} />
       )}
     </div>
   );

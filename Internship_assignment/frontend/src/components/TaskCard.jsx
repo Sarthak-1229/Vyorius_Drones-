@@ -9,7 +9,7 @@ function formatDate(iso) {
   return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
 }
 
-function TaskCard({ task, index, onEdit }) {
+function TaskCard({ task, index, onEdit, onView }) {
   const { deleteTask } = useTaskContext();
   const { user } = useAuth();
 
@@ -17,16 +17,20 @@ function TaskCard({ task, index, onEdit }) {
     task.attachment &&
     (task.attachment.startsWith('data:image') || /\.(png|jpe?g|gif|webp|svg)$/i.test(task.attachment));
 
+  const isOverdue = task.dueDate && new Date(task.dueDate) < new Date() && task.status !== 'Done';
+
   return (
     <Draggable draggableId={task.id} index={index}>
       {(provided, snapshot) => (
         <div
-          className={`task-card priority-${task.priority} ${snapshot.isDragging ? 'dragging' : ''}`}
+          className={`task-card priority-${task.priority} ${snapshot.isDragging ? 'dragging' : ''} ${isOverdue ? 'overdue' : ''}`}
           ref={provided.innerRef}
           {...provided.draggableProps}
           {...provided.dragHandleProps}
           data-testid={`task-card-${task.id}`}
           aria-label={`Task: ${task.title}`}
+          onClick={onView}
+          style={{ cursor: 'pointer', ...provided.draggableProps.style }}
         >
           {/* Header row */}
           <div className="task-header">
@@ -86,17 +90,51 @@ function TaskCard({ task, index, onEdit }) {
           )}
 
           {/* Footer */}
-          <div className="task-footer">
+          <div className="task-footer" style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
+            {task.assignee && (
+              <div 
+                className="task-assignee-avatar" 
+                title={`Assigned to ${task.assignee}`}
+                style={{
+                  border: '2px solid var(--accent-black)',
+                  width: '28px',
+                  height: '28px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  borderRadius: '50%',
+                  background: 'var(--accent-black)',
+                  color: '#ffffff',
+                  fontWeight: 'bold',
+                  fontSize: '0.85rem'
+                }}
+              >
+                {task.assignee.charAt(0).toUpperCase()}
+              </div>
+            )}
             {task.attachment && !isImage && (
-              <span className="task-attachment-pill">
+              <a 
+                href={task.attachment}
+                download={task.attachmentName || 'download'}
+                className="task-attachment-pill" 
+                style={{ textDecoration: 'none', color: 'inherit', marginLeft: '0.5rem' }}
+                onClick={(e) => e.stopPropagation()}
+              >
                 📎 {task.attachmentName || 'Attachment'}
-              </span>
+              </a>
             )}
-            {task.createdAt && (
-              <span className="task-date" style={{ marginLeft: 'auto' }}>
-                {formatDate(task.createdAt)}
-              </span>
-            )}
+            <div style={{ marginLeft: 'auto', display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '2px' }}>
+              {task.dueDate && (
+                <span className={`task-date ${isOverdue ? 'overdue-text' : ''}`}>
+                  🎯 Due: {formatDate(task.dueDate)}
+                </span>
+              )}
+              {task.createdAt && (
+                <span className="task-date">
+                  📅 Added: {formatDate(task.createdAt)}
+                </span>
+              )}
+            </div>
           </div>
         </div>
       )}

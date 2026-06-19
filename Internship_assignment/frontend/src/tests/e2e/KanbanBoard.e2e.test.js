@@ -8,6 +8,19 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 // Helpers
 // ══════════════════════════════════════════════════════════════════════
 
+test.beforeEach(async ({ page }) => {
+  await page.goto('/');
+  // Authenticate as the seeded admin user
+  const loginHeader = page.getByText('System Login');
+  if (await loginHeader.isVisible()) {
+    await page.fill('input[placeholder="Enter email or username"]', 'sarthak');
+    await page.fill('input[placeholder="Enter password"]', 'sarthak_1204');
+    await page.click('button:has-text("ACCESS BOARD")');
+    // Wait for the board to load
+    await page.waitForSelector('.task-board-container', { state: 'visible' });
+  }
+});
+
 async function openAddModal(page) {
   await page.click('#add-task-header-btn');
   await page.waitForSelector('[role="dialog"]', { state: 'visible' });
@@ -30,7 +43,7 @@ async function fillAndSubmitTask(page, { title, description = '', priority = 'Me
 test.describe('Page layout', () => {
   test('loads the app and shows the header', async ({ page }) => {
     await page.goto('/');
-    await expect(page.getByText(/Kanban/i)).toBeVisible();
+    await expect(page.getByText(/VYORIUS/i)).toBeVisible();
   });
 
   test('shows all three column headings', async ({ page }) => {
@@ -391,15 +404,70 @@ test.describe('Progress chart', () => {
 // ══════════════════════════════════════════════════════════════════════
 
 test.describe('Drag and drop', () => {
-  test('task is draggable (has draggable role/attribute)', async ({ page }) => {
+  test('can drag a task from To Do to In Progress', async ({ page }) => {
     await page.goto('/');
     await openAddModal(page);
     await fillAndSubmitTask(page, { title: 'Draggable task' });
 
     const card = page.locator('.task-card').filter({ hasText: 'Draggable task' });
     await expect(card).toBeVisible();
-    // Verify the card exists and is interactive
-    await card.hover();
-    await expect(card).toBeVisible();
+    
+    // The drag handle is the inner card element or the card itself.
+    // Using Playwright's dragTo API to move it to the In Progress column.
+    const inProgressColumn = page.locator('.column-inprogress .column-content');
+    await card.dragTo(inProgressColumn);
+
+    // Verify it moved to the In Progress column
+    await expect(inProgressColumn.locator('.task-card').filter({ hasText: 'Draggable task' })).toBeVisible();
+  });
+});
+
+// ══════════════════════════════════════════════════════════════════════
+// Section 9 — Multi-browser Real-time Sync
+// ══════════════════════════════════════════════════════════════════════
+
+test.describe('Multi-browser real-time sync', () => {
+  test('task creation syncs to a second browser window automatically', async ({ browser }) => {
+    const context1 = await browser.newContext();
+    const context2 = await browser.newContext();
+
+    const page1 = await context1.newPage();
+    const page2 = await context2.newPage();
+
+    await page1.goto('/');
+    await page2.goto('/');
+
+    // Login page1
+    const loginHeader1 = page1.getByText('System Login');
+    if (await loginHeader1.isVisible()) {
+      await page1.fill('input[placeholder="Enter email or username"]', 'sarthak');
+      await page1.fill('input[placeholder="Enter password"]', 'sarthak_1204');
+      await page1.click('button:has-text("ACCESS BOARD")');
+      await page1.waitForSelector('.task-board-container', { state: 'visible' });
+    }
+
+    // Login page2
+    const loginHeader2 = page2.getByText('System Login');
+    if (await loginHeader2.isVisible()) {
+      await page2.fill('input[placeholder="Enter email or username"]', 'sarthak');
+      await page2.fill('input[placeholder="Enter password"]', 'sarthak_1204');
+      await page2.click('button:has-text("ACCESS BOARD")');
+      await page2.waitForSelector('.task-board-container', { state: 'visible' });
+    }
+
+    const uniqueTitle = 'Sync Task ' + Date.now();
+
+    // Create task in page1
+    await page1.click('#add-task-header-btn');
+    await page1.waitForSelector('[role="dialog"]', { state: 'visible' });
+    await page1.fill('#task-title', uniqueTitle);
+    await page1.click('#submit-task-btn');
+    await page1.waitForSelector('[role="dialog"]', { state: 'hidden' });
+
+    // Verify it appears in page2 automatically without refreshing
+    await expect(page2.getByText(uniqueTitle)).toBeVisible({ timeout: 10000 });
+
+    await context1.close();
+    await context2.close();
   });
 });

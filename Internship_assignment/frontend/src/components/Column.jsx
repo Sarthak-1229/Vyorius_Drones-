@@ -2,7 +2,7 @@ import React from 'react';
 import { Droppable } from '@hello-pangea/dnd';
 import TaskCard from './TaskCard';
 
-function Column({ col, tasks, onAddTask, onEditTask }) {
+function Column({ col, tasks, onAddTask, onEditTask, onViewTask }) {
   return (
     <div className={`column-container ${col.cssClass}`}>
       <div className="column-header">
@@ -42,6 +42,7 @@ function Column({ col, tasks, onAddTask, onEditTask }) {
                 task={task}
                 index={index}
                 onEdit={onEditTask}
+                onView={() => onViewTask(task)}
               />
             ))}
 

@@ -59,6 +59,15 @@ app.post("/api/login", async (req, res) => {
   }
 });
 
+app.get("/api/users", async (req, res) => {
+  try {
+    const users = await User.find({}, 'username email');
+    res.json(users);
+  } catch (error) {
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
 // Admin Seeder
 const seedAdmin = async () => {
   try {
@@ -118,7 +127,9 @@ io.on("connection", async (socket) => {
         status: taskData.status || "To Do",
         priority: taskData.priority || "Low",
         category: taskData.category || "Feature",
-        attachment: taskData.attachment || null
+        attachment: taskData.attachment || null,
+        dueDate: taskData.dueDate || null,
+        assignee: taskData.assignee || null
       });
       await newTaskDoc.save();
       io.emit("task:created", newTaskDoc.toObject()); 
@@ -137,7 +148,9 @@ io.on("connection", async (socket) => {
           description: updatedTask.description,
           priority: updatedTask.priority,
           category: updatedTask.category,
-          attachment: updatedTask.attachment
+          attachment: updatedTask.attachment,
+          dueDate: updatedTask.dueDate,
+          assignee: updatedTask.assignee
         },
         { new: true }
       );

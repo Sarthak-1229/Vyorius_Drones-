@@ -1,5 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { useTaskContext } from '../context/TaskContext';
+import { useAuth } from '../context/AuthContext';
 
 const PRIORITIES = ['Low', 'Medium', 'High'];
 const CATEGORIES = ['Feature', 'Bug', 'Enhancement'];
@@ -8,6 +9,7 @@ const ALLOWED_TYPES = ['image/png', 'image/jpeg', 'image/gif', 'image/webp', 'ap
 
 function TaskModal({ onClose, editingTask, defaultColumn }) {
   const { createTask, updateTask } = useTaskContext();
+  const { user } = useAuth();
 
   const [title, setTitle] = useState(editingTask?.title || '');
   const [description, setDescription] = useState(editingTask?.description || '');
@@ -16,6 +18,9 @@ function TaskModal({ onClose, editingTask, defaultColumn }) {
   const [status, setStatus] = useState(editingTask?.status || defaultColumn || 'To Do');
   const [attachment, setAttachment] = useState(editingTask?.attachment || null);
   const [attachmentName, setAttachmentName] = useState(editingTask?.attachmentName || '');
+  const [assignee] = useState(editingTask?.assignee || user?.username || '');
+  const [dueDate, setDueDate] = useState(editingTask?.dueDate ? new Date(editingTask.dueDate).toISOString().split('T')[0] : '');
+  
   const [fileError, setFileError] = useState('');
   const [dragActive, setDragActive] = useState(false);
   const fileInputRef = useRef(null);
@@ -52,7 +57,11 @@ function TaskModal({ onClose, editingTask, defaultColumn }) {
     e.preventDefault();
     if (!title.trim()) return;
 
-    const payload = { title: title.trim(), description, priority, category, status, attachment, attachmentName };
+    const payload = { 
+      title: title.trim(), description, priority, category, status, attachment, attachmentName,
+      assignee: assignee || null,
+      dueDate: dueDate || null
+    };
 
     if (isEditing) {
       updateTask({ ...editingTask, ...payload });
@@ -149,6 +158,30 @@ function TaskModal({ onClose, editingTask, defaultColumn }) {
                 <option key={s} value={s}>{s}</option>
               ))}
             </select>
+          </div>
+
+          {/* Assignee & Due Date */}
+          <div className="form-row" style={{ marginTop: '1rem' }}>
+            <div className="form-group" style={{ marginBottom: 0 }}>
+              <label className="form-label" htmlFor="task-assignee">Assignee</label>
+              <div 
+                id="task-assignee" 
+                className="form-input" 
+                style={{ background: 'var(--bg-color)', color: 'var(--text-muted)', cursor: 'not-allowed' }}
+              >
+                {assignee || 'Unassigned'}
+              </div>
+            </div>
+            <div className="form-group" style={{ marginBottom: 0 }}>
+              <label className="form-label" htmlFor="task-due-date">Due Date</label>
+              <input
+                type="date"
+                id="task-due-date"
+                className="form-input"
+                value={dueDate}
+                onChange={(e) => setDueDate(e.target.value)}
+              />
+            </div>
           </div>
 
           {/* File upload */}

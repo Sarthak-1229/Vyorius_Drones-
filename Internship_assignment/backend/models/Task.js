@@ -30,6 +30,14 @@ const taskSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.Mixed,
       default: null,
     },
+    dueDate: {
+      type: Date,
+      default: null,
+    },
+    assignee: {
+      type: String,
+      default: null,
+    },
   },
   {
     timestamps: true,
