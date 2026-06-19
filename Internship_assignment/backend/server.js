@@ -94,7 +94,7 @@ const seedAdmin = async () => {
 
 // Connect to MongoDB
 const MONGODB_URI = process.env.MONGODB_URI || "mongodb://127.0.0.1:27017/kanban_board";
-mongoose.connect(MONGODB_URI)
+mongoose.connect(MONGODB_URI, { dbName: 'kanban' })
   .then(() => {
     console.log("Connected to MongoDB");
     seedAdmin();
