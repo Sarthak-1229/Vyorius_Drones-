@@ -1,6 +1,7 @@
 import React from 'react';
 import { Draggable } from '@hello-pangea/dnd';
 import { useTaskContext } from '../context/TaskContext';
+import { useAuth } from '../context/AuthContext';
 
 function formatDate(iso) {
   if (!iso) return '';
@@ -10,6 +11,7 @@ function formatDate(iso) {
 
 function TaskCard({ task, index, onEdit }) {
   const { deleteTask } = useTaskContext();
+  const { user } = useAuth();
 
   const isImage =
     task.attachment &&
@@ -49,18 +51,20 @@ function TaskCard({ task, index, onEdit }) {
               >
                 ✏️
               </button>
-              <button
-                className="task-action-btn delete"
-                id={`delete-task-${task.id}`}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  deleteTask(task.id);
-                }}
-                title="Delete task"
-                aria-label="Delete task"
-              >
-                🗑
-              </button>
+              {user?.username === 'sarthak' && (
+                <button
+                  className="task-action-btn delete"
+                  id={`delete-task-${task.id}`}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    deleteTask(task.id);
+                  }}
+                  title="Delete task"
+                  aria-label="Delete task"
+                >
+                  🗑
+                </button>
+              )}
             </div>
           </div>
 

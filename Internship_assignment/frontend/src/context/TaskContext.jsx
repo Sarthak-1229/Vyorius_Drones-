@@ -11,7 +11,20 @@ export const TaskProvider = ({ children }) => {
 
   useEffect(() => {
     // Connect to backend server
-    const newSocket = io('http://localhost:5000');
+    const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000';
+    const token = localStorage.getItem('token');
+    const newSocket = io(BACKEND_URL, {
+      auth: { token }
+    });
+    
+    newSocket.on('connect_error', (err) => {
+      console.error('Socket connection error:', err.message);
+    });
+    
+    newSocket.on('error', (errMsg) => {
+      alert(errMsg); // Handle unauthorized deletion errors
+    });
+
     setSocket(newSocket);
 
     // Initial sync

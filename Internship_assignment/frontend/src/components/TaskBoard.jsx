@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { DragDropContext } from '@hello-pangea/dnd';
 import { useTaskContext } from '../context/TaskContext';
+import { useAuth } from '../context/AuthContext';
 import Column from './Column';
 import TaskModal from './TaskModal';
 
@@ -66,6 +67,7 @@ function ProgressChart({ tasks }) {
 
 function TaskBoard() {
   const { tasks, moveTask, socket } = useTaskContext();
+  const { user, logout } = useAuth();
   const [modalOpen, setModalOpen] = useState(false);
   const [editingTask, setEditingTask] = useState(null);
   const [defaultColumn, setDefaultColumn] = useState('To Do');
@@ -100,10 +102,19 @@ function TaskBoard() {
             Vyorius <span>Drones</span>
           </h1>
         </div>
-        <div className="header-meta">
-          <div className="ws-status">
+        <div className="header-meta" style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+          <div className="ws-status" style={{ marginRight: '0.5rem' }}>
             <span className={`ws-dot ${connected ? '' : 'disconnected'}`} />
             {connected ? 'Connected' : 'Connecting…'}
+          </div>
+          <div className="user-profile" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', background: 'var(--bg-color)', padding: '0.5rem 1rem', border: '2px solid var(--border-color)', fontWeight: 'bold' }}>
+            <span>👤 {user?.username}</span>
+            <button 
+              onClick={logout}
+              style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--danger-color)', fontWeight: 'bold', marginLeft: '0.5rem', borderLeft: '2px solid var(--border-color)', paddingLeft: '0.5rem' }}
+            >
+              LOGOUT
+            </button>
           </div>
           <button
             className="btn btn-primary"

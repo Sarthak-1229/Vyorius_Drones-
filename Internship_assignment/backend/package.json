@@ -13,8 +13,11 @@
   "dependencies": {
     "@playwright/test": "^1.50.1",
     "@testing-library/react": "^16.2.0",
+    "bcryptjs": "^3.0.3",
+    "cors": "^2.8.6",
     "dotenv": "^17.4.2",
     "express": "^4.21.2",
+    "jsonwebtoken": "^9.0.3",
     "mongoose": "^9.7.1",
     "nodemon": "^3.1.9",
     "socket.io": "^4.8.1",

@@ -23,7 +23,7 @@ const taskSchema = new mongoose.Schema(
     },
     category: {
       type: String,
-      enum: ["Feature", "Bug", "Design", "Research"],
+      enum: ["Feature", "Bug", "Design", "Research", "Enhancement"],
       default: "Feature",
     },
     attachment: {

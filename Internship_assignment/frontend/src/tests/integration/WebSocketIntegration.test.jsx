@@ -26,6 +26,15 @@ vi.mock('@hello-pangea/dnd', () => ({
     children({ innerRef: () => {}, draggableProps: {}, dragHandleProps: {} }, { isDragging: false }),
 }));
 
+// ─── AuthContext mock ──────────────────────────────────────────────────────
+vi.mock('../../context/AuthContext', () => ({
+  useAuth: vi.fn(() => ({
+    user: { username: 'sarthak' },
+    logout: vi.fn(),
+  })),
+  AuthProvider: ({ children }) => <div>{children}</div>,
+}));
+
 import { TaskProvider } from '../../context/TaskContext';
 import TaskBoard from '../../components/TaskBoard';
 

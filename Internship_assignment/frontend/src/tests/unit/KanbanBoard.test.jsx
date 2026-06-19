@@ -24,6 +24,15 @@ vi.mock('@hello-pangea/dnd', () => ({
     children({ innerRef: () => {}, draggableProps: {}, dragHandleProps: {} }, { isDragging: false }),
 }));
 
+// ─── AuthContext mock ──────────────────────────────────────────────────────
+vi.mock('../../context/AuthContext', () => ({
+  useAuth: vi.fn(() => ({
+    user: { username: 'sarthak' },
+    logout: vi.fn(),
+  })),
+  AuthProvider: ({ children }) => <div>{children}</div>,
+}));
+
 import TaskBoard from '../../components/TaskBoard';
 import TaskModal from '../../components/TaskModal';
 import { TaskProvider, useTaskContext } from '../../context/TaskContext';
@@ -39,7 +48,7 @@ const renderWithProvider = (ui) =>
 describe('TaskBoard — rendering', () => {
   it('renders the header with brand name', () => {
     renderWithProvider(<TaskBoard />);
-    expect(screen.getByText(/Kanban/i)).toBeInTheDocument();
+    expect(screen.getByText(/VYORIUS/i)).toBeInTheDocument();
   });
 
   it('renders all three column titles', () => {
