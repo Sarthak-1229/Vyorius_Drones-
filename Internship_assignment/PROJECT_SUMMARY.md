@@ -1,6 +1,18 @@
 # Project Summary
 
-This repository is a starter for a real-time Kanban board application built with React, Socket.IO, Vitest, and Playwright.
+This repository contains a real-time Kanban board application built with React, Socket.IO, Vitest, and Playwright.
+
+## 🚀 Deployment Status
+
+The application has been successfully configured and deployed!
+- **Frontend**: Hosted on Vercel. SPA routing is handled via `vercel.json`.
+- **Backend**: Hosted on Render. Deployment is automated via `render.yaml`.
+- **Database**: Connected to MongoDB Atlas (configured to enforce the `kanban` database).
+
+Recent configurations:
+- Fixed a 404 HTML parsing bug by hardcoding the Render URL fallback and stripping trailing slashes in `AuthContext.jsx` and `TaskContext.jsx`.
+- Set up CORS in `server.js` to allow production traffic.
+- Updated the favicon to a custom logo.
 
 ## What the project currently contains
 
@@ -10,6 +22,8 @@ This repository is a starter for a real-time Kanban board application built with
 - Explains the frontend/backend structure and testing expectations.
 
 ### `backend/`
+- `render.yaml`
+  - Render blueprint for automated deployment.
 - `package.json`
   - Defines backend npm scripts: `start` and `dev`.
   - Includes dependencies: `express`, `socket.io`, and `nodemon`.
@@ -17,9 +31,12 @@ This repository is a starter for a real-time Kanban board application built with
 - `server.js`
   - Creates an Express HTTP server and attaches Socket.IO.
   - Logs when users connect/disconnect.
+  - Configured with CORS for production and connects to the MongoDB `kanban` database.
   - Contains a TODO comment: WebSocket events for task management are not implemented.
 
 ### `frontend/`
+- `vercel.json`
+  - Handles SPA routing for Vercel deployment.
 - `package.json`
   - Defines a Vite + React app.
   - Scripts: `dev`, `build`, `lint`, `preview`, `test`, `test:e2e`.
