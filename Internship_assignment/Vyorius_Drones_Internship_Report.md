@@ -55,4 +55,22 @@ Before wrapping up, I made sure the codebase was clean. I ran the Vite productio
 
 ---
 
+## 6. Application Gallery
+
+Here are a few screenshots showcasing the final responsive design, authentication flows, and real-time task board:
+
+**Operator Authentication (Login & Sign Up):**
+<div style="display: flex; gap: 10px;">
+  <img src="./01_login.png" alt="System Login Screen" width="400" />
+  <img src="./02_signup.png" alt="System Sign Up Screen" width="400" />
+</div>
+
+**Main Dashboard & Real-Time Kanban Board:**
+<img src="./03_main_board.png" alt="Main Kanban Board" width="800" />
+
+**Task Creation & Assignment Modal:**
+<img src="./04_add_task_modal.png" alt="Add Task Modal" width="800" />
+
+---
+
 Thanks again for reviewing my work! This assignment was a great learning experience, and I'm really proud of how the final application turned out. I'm looking forward to your feedback!
