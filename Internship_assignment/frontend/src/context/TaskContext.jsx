@@ -11,7 +11,7 @@ export const TaskProvider = ({ children }) => {
 
   useEffect(() => {
     // Connect to backend server
-    const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'https://vyorius-drones.onrender.com';
+    const BACKEND_URL = (import.meta.env.VITE_BACKEND_URL || 'https://vyorius-drones.onrender.com').replace(/\/$/, "");
     const token = localStorage.getItem('token');
     const newSocket = io(BACKEND_URL, {
       auth: { token }
